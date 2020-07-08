@@ -63,7 +63,51 @@ class AlphaUpdate(tf.keras.callbacks.Callback):
         self.model.num_imgs_seen.assign(num_imgs_seen)
         self.model.fade.assign(f)
 
-
     def on_epoch_end(self, epoch, logs=None):
         self.model.alpha.assign(0)
         self.model.num_imgs_seen.assign(0)
+
+
+class ModelPlotter(tf.keras.callbacks.Callback):
+    def __init__(self, log_dir='logs'):
+        super().__init__()
+        self.log_dir = log_dir
+
+    def on_epoch_begin(self, epoch, logs=None):
+
+        try:
+            tf.keras.utils.plot_model(self.model.E, to_file=os.path.join(self.logs,
+                                                                         'encoder_' + str(self.model.E.input_shape[1])
+                                                                         + '.png'),
+                                      show_shapes=True,
+                                      expand_nested=True)
+
+            tf.keras.utils.plot_model(self.model.G, to_file=os.path.join(self.logs,
+                                                                         'generator_' + str(
+                                                                             self.model.G.output_shape[1])
+                                                                         + '.png'),
+                                      show_shapes=True,
+                                      expand_nested=True)
+
+            tf.keras.utils.plot_model(self.model.D, to_file=os.path.join(self.logs,
+                                                                         'discriminator_' + str(
+                                                                             self.model.D.output_shape[1])
+                                                                         + '.png'),
+                                      show_shapes=True,
+                                      expand_nested=True)
+        except:
+            print('Unable to print models. Is GraphViz installed?')
+
+        try:
+            tf.keras.utils.plot_model(self.model.E_fade, to_file='encoder_fade_' + str(in_shape[1]) + '.png',
+                                      show_shapes=True,
+                                      expand_nested=True)
+            tf.keras.utils.plot_model(self.model.D_fade, to_file='discriminator_fade_' + str(in_shape[1]) + '.png',
+                                      show_shapes=True, expand_nested=True)
+            tf.keras.utils.plot_model(self.model.G_fade,
+                                      to_file='generator_fade_' + str(model1.output_shape[1]) + '.png',
+                                      show_shapes=True,
+                                      expand_nested=True)
+        except:
+            # This will happen on 4x4x3 since there is no fade
+            pass

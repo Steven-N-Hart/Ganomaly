@@ -186,6 +186,7 @@ class ANNOGAN(tf.keras.Model):
         if style == 'discriminator':
             self.D = model1
             self.D_fade = model2
+
         else:
             self.E = model1
             self.E_fade = model2
